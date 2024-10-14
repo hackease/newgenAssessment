@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/nexgenAssessment.iml" filepath="$PROJECT_DIR$/nexgenAssessment.iml" />
+      <module fileurl="file://$PROJECT_DIR$/newgenAssessment.iml" filepath="$PROJECT_DIR$/newgenAssessment.iml" />
     </modules>
   </component>
 </project>
