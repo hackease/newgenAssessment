@@ -333,6 +333,8 @@ public class BestHolidayPlan {
     }
     
     private static void printOutput(HashMap<String, String> theHolidaysPlan, int totalHolidaysEnjoyed) {
+        System.out.println("Sequence of office transitions for each month:");
+        System.out.println();
         System.out.println("January:\t" + theHolidaysPlan.get("January"));
         System.out.println("February:\t" + theHolidaysPlan.get("February"));
         System.out.println("March:\t\t" + theHolidaysPlan.get("March"));
@@ -346,7 +348,7 @@ public class BestHolidayPlan {
         System.out.println("November:\t" + theHolidaysPlan.get("November"));
         System.out.println("December:\t" + theHolidaysPlan.get("December"));
         System.out.println();
-        System.out.println("Total Holidays Enjoyed: " + totalHolidaysEnjoyed);
+        System.out.println("Total holidays enjoyed: " + totalHolidaysEnjoyed);
     }
     
 }
