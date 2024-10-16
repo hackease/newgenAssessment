@@ -45,18 +45,16 @@ public class BestHolidayPlan {
         int totalHolidaysEnjoyed = bestHolidaysPlan.keySet().iterator().next();
 
         printOutput(theHolidaysPlan, totalHolidaysEnjoyed);
-    
     }
     
     private static HashMap<Integer, HashMap<String, String>> bestHolidaysPlan() {
-        
         HashMap<Integer, HashMap<String, String>> result = new HashMap<>();
         
-        List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> bestHolidayPlansPerQuarter
-                = bestHolidayPlansPerQuarter();
+        List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> allHolidayPlansPerQuarter
+                = allHolidayPlansPerQuarter();
         
         List<HashMap<Integer, List<HashMap<String, Integer>>>> bestHolidaysPlans
-                = bestHolidaysPlans(bestHolidayPlansPerQuarter);
+                = bestHolidaysPlans(allHolidayPlansPerQuarter);
         
         bestHolidaysPlans.sort((c1, c2) -> {
             Integer value1 = c1.keySet().iterator().next();
@@ -78,7 +76,6 @@ public class BestHolidayPlan {
         result.put(totalHolidays, thePlan);
         
         return result;
-        
     }
     
     private static int totalHolidays(List<HashMap<String, Integer>> bestHolidaysPlan) {
@@ -88,86 +85,22 @@ public class BestHolidayPlan {
     }
     
     private static List<HashMap<Integer, List<HashMap<String, Integer>>>> bestHolidaysPlans(
-            List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> bestHolidayPlansPerQuarter
+            List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> allHolidayPlansPerQuarter
     ) {
         List<HashMap<Integer, List<HashMap<String, Integer>>>> result = new ArrayList<>();
+        List<HashMap<Integer, List<HashMap<String, Integer>>>> bestHolidaysPlans = new ArrayList<>();
         
-        List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> newBestHolidayPlansPerQuarter = new ArrayList<>();
-        List<HashMap<String, Integer>> maxQuarterlyStartingHolidays = new ArrayList<>();
-        
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> newFirstQuarter = new ArrayList<>();
-        HashMap<String, Integer> firstQuarterMaxStartingHolidays = bestHolidayPlansPerQuarter.getFirst().getFirst().values().iterator().next().getFirst();
-
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> newSecondQuarter = new ArrayList<>();
-        HashMap<String, Integer> secondQuarterMaxStartingHolidays = bestHolidayPlansPerQuarter.get(1).getFirst().values().iterator().next().getFirst();
-
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> newThirdQuarter = new ArrayList<>();
-        HashMap<String, Integer> thirdQuarterMaxStartingHolidays = bestHolidayPlansPerQuarter.get(2).getFirst().values().iterator().next().getFirst();
-
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> newFourthQuarter = new ArrayList<>();
-        HashMap<String, Integer> fourthQuarterMaxStartingHolidays = bestHolidayPlansPerQuarter.get(3).getFirst().values().iterator().next().getFirst();
-
-        maxQuarterlyStartingHolidays.add(firstQuarterMaxStartingHolidays);
-        maxQuarterlyStartingHolidays.add(secondQuarterMaxStartingHolidays);
-        maxQuarterlyStartingHolidays.add(thirdQuarterMaxStartingHolidays);
-        maxQuarterlyStartingHolidays.add(fourthQuarterMaxStartingHolidays);
-
-        newBestHolidayPlansPerQuarter.add(newFirstQuarter);
-        newBestHolidayPlansPerQuarter.add(newSecondQuarter);
-        newBestHolidayPlansPerQuarter.add(newThirdQuarter);
-        newBestHolidayPlansPerQuarter.add(newFourthQuarter);
-        
-        for (int i=0; i<bestHolidayPlansPerQuarter.size()-1; i++) {
-            for (int j=0; j<bestHolidayPlansPerQuarter.get(i).size(); j++) {
-                Iterator<Map.Entry<Integer, List<HashMap<String, Integer>>>> quarterIterator = bestHolidayPlansPerQuarter.get(i).get(j).entrySet().iterator();
-
-                while (quarterIterator.hasNext()) {
-                    Map.Entry<Integer, List<HashMap<String, Integer>>> entry = quarterIterator.next();
-
-                    HashMap<String, Integer> tempMap = entry.getValue().get(2);
-                    List<String> possibleLocations = possibleLocations(tempMap.keySet().iterator().next());
-                    possibleLocations.addFirst(tempMap.keySet().iterator().next());
-
-                    if (possibleLocations.contains(maxQuarterlyStartingHolidays.get(i+1).keySet().iterator().next())) {
-                        newBestHolidayPlansPerQuarter.get(i).add(new HashMap<>(Map.of(
-                                bestHolidayPlansPerQuarter.get(i).get(j).keySet().iterator().next(),
-                                bestHolidayPlansPerQuarter.get(i).get(j).values().iterator().next()
-                        )));
-                    }
-
-                    quarterIterator.remove();
-                }
-            }
-        }
-
-        newBestHolidayPlansPerQuarter.remove(3);
-        newBestHolidayPlansPerQuarter.add(bestHolidayPlansPerQuarter.get(3));
-        
-        for (List<HashMap<Integer, List<HashMap<String, Integer>>>> hashMaps:
-                newBestHolidayPlansPerQuarter) {
-            hashMaps.sort(
-                    (entry1, entry2) -> {
-                        Integer value1 = entry1.values().iterator().next()
-                                                 .get(2).values().iterator().next();
-                        Integer value2 = entry2.values().iterator().next()
-                                                 .get(2).values().iterator().next();
-                        return value2.compareTo(value1);
-                    }
-            );
-        }
-        
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> firstQuarterLists = newBestHolidayPlansPerQuarter.getFirst();
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> secondQuarterLists = newBestHolidayPlansPerQuarter.get(1);
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> thirdQuarterLists = newBestHolidayPlansPerQuarter.get(2);
-        List<HashMap<Integer, List<HashMap<String, Integer>>>> fourthQuarterLists = newBestHolidayPlansPerQuarter.get(3);
+        var firstQuarterLists = allHolidayPlansPerQuarter.getFirst();
+        var secondQuarterLists = allHolidayPlansPerQuarter.get(1);
+        var thirdQuarterLists = allHolidayPlansPerQuarter.get(2);
+        var fourthQuarterLists = allHolidayPlansPerQuarter.get(3);
         
         int maxHolidays = 0;
         
-        for (HashMap<Integer, List<HashMap<String, Integer>>> first: firstQuarterLists) {
-            for (HashMap<Integer, List<HashMap<String, Integer>>> second: secondQuarterLists) {
-                for (HashMap<Integer, List<HashMap<String, Integer>>> third: thirdQuarterLists) {
-                    for (HashMap<Integer, List<HashMap<String, Integer>>> fourth: fourthQuarterLists) {
-                        
+        for (var first: firstQuarterLists) {
+            for (var second: secondQuarterLists) {
+                for (var third: thirdQuarterLists) {
+                    for (var fourth: fourthQuarterLists) {
                         Integer firstRelocationCounts = first.keySet().iterator().next();
                         Integer secondRelocationCounts = second.keySet().iterator().next();
                         Integer thirdRelocationCounts = third.keySet().iterator().next();
@@ -181,43 +114,71 @@ public class BestHolidayPlan {
                         String thirdStartLocation = third.values().iterator().next().getFirst().keySet().iterator().next();
                         String fourthStartLocation = fourth.values().iterator().next().getFirst().keySet().iterator().next();
                         
-                        List<HashMap<String, Integer>> tempBestHolidaysPlan = new ArrayList<>(first.values().iterator().next());
+                        var tempBestHolidaysPlan = new ArrayList<>(first.values().iterator().next());
                         
-                        if (firstEndLocation.equals(secondStartLocation))
-                            tempBestHolidaysPlan.addAll(second.values().iterator().next());
-                        else {
-                            if (secondRelocationCounts == 1) {
+                        var possibleSecondStartLocations = possibleLocations(firstEndLocation);
+                        possibleSecondStartLocations.addFirst(firstEndLocation);
+                        
+                        if (possibleSecondStartLocations.contains(secondStartLocation)) {
+                            if (firstEndLocation.equals(secondStartLocation))
                                 tempBestHolidaysPlan.addAll(second.values().iterator().next());
-                                secondRelocationCounts++;
+                            else {
+                                if (secondRelocationCounts == 1) {
+                                    tempBestHolidaysPlan.addAll(second.values().iterator().next());
+                                    secondRelocationCounts++;
+                                }
                             }
                         }
                         
-                        if (secondEndLocation.equals(thirdStartLocation))
-                            tempBestHolidaysPlan.addAll(third.values().iterator().next());
-                        else {
-                            if (thirdRelocationCounts == 1) {
+                        possibleSecondStartLocations.clear();
+                        
+                        var possibleThirdStartLocations = possibleLocations(secondEndLocation);
+                        possibleThirdStartLocations.addFirst(secondEndLocation);
+                        
+                        if (possibleThirdStartLocations.contains(thirdStartLocation)) {
+                            if (secondEndLocation.equals(thirdStartLocation))
                                 tempBestHolidaysPlan.addAll(third.values().iterator().next());
-                                thirdRelocationCounts++;
+                            else {
+                                if (thirdRelocationCounts == 1) {
+                                    tempBestHolidaysPlan.addAll(third.values().iterator().next());
+                                    thirdRelocationCounts++;
+                                }
                             }
                         }
                         
-                        if (thirdEndLocation.equals(fourthStartLocation))
-                            tempBestHolidaysPlan.addAll(fourth.values().iterator().next());
-                        else {
-                            if (fourthRelocationCounts == 1) {
+                        possibleThirdStartLocations.clear();
+                        
+                        var possibleFourthStartLocations = possibleLocations(thirdEndLocation);
+                        possibleFourthStartLocations.addFirst(thirdEndLocation);
+                        
+                        if (possibleFourthStartLocations.contains(fourthStartLocation)) {
+                            if (thirdEndLocation.equals(fourthStartLocation))
                                 tempBestHolidaysPlan.addAll(fourth.values().iterator().next());
-                                fourthRelocationCounts++;
+                            else {
+                                if (fourthRelocationCounts == 1) {
+                                    tempBestHolidaysPlan.addAll(fourth.values().iterator().next());
+                                    fourthRelocationCounts++;
+                                }
                             }
                         }
+                        
+                        possibleFourthStartLocations.clear();
                         
                         if (tempBestHolidaysPlan.size() == 12) {
                             final int[] totalHolidays = {0};
-                            tempBestHolidaysPlan.forEach((element) -> totalHolidays[0] += element.values().iterator().next());
+                            tempBestHolidaysPlan.forEach(
+                                    (element) -> totalHolidays[0] += element.values().iterator().next()
+                            );
                             maxHolidays = Math.max(maxHolidays, totalHolidays[0]);
                             
                             if (totalHolidays[0] == maxHolidays) {
-                                Integer relocationCounts = firstRelocationCounts + secondRelocationCounts + thirdRelocationCounts + fourthRelocationCounts;
-                                result.add(new HashMap<>(Map.of(relocationCounts, tempBestHolidaysPlan)));
+                                Integer relocationCounts = firstRelocationCounts+
+                                                                   secondRelocationCounts+
+                                                                   thirdRelocationCounts+
+                                                                   fourthRelocationCounts;
+                                bestHolidaysPlans.addFirst(new HashMap<>(Map.of(
+                                        relocationCounts, tempBestHolidaysPlan
+                                )));
                             }
                         }
                     }
@@ -225,85 +186,83 @@ public class BestHolidayPlan {
             }
         }
         
+        int[] maximumHolidays = {0};
+        bestHolidaysPlans.forEach(
+                (action) -> {
+                    Integer actionKey = action.entrySet().iterator().next().getKey();
+                    var actionValue = action.entrySet().iterator().next().getValue();
+                    int[] totalHolidays = {0};
+                    actionValue.forEach(
+                            (tempMap) -> {
+                                totalHolidays[0] += tempMap.values().iterator().next();
+                                maximumHolidays[0] = Math.max(maximumHolidays[0], totalHolidays[0]);
+                            }
+                    );
+                    
+                    if (totalHolidays[0] == maximumHolidays[0])
+                        result.addFirst(new HashMap<>(Map.of(actionKey, actionValue)));
+                }
+        );
+        
         return result;
     }
     
-    private static List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> bestHolidayPlansPerQuarter() {
+    private static List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> allHolidayPlansPerQuarter() {
         
         List<List<HashMap<Integer, List<HashMap<String, Integer>>>>> result = new ArrayList<>();
         
-        List<List<List<HashMap<String, Integer>>>> holidaysPerQuarter
-                = holidaysPerQuarter();
+        var holidaysPerQuarter = holidaysPerQuarter();
+        var sortedHolidaysPerQuarter = sortedHolidaysPerQuarter(holidaysPerQuarter);
         
-        List<List<List<HashMap<String, Integer>>>> sortedHolidaysPerQuarter
-                = sortedHolidaysPerQuarter(holidaysPerQuarter);
-
-        List<HashMap<String, Integer>> maximumStartingHolidayPerQuarter =
-                maximumStartingHolidayPerQuarter(sortedHolidaysPerQuarter);
-        
-        int i=0;
-        while (i<4) {
-            List<HashMap<String, Integer>> firstMonthHolidays = sortedHolidaysPerQuarter.get(i).getFirst();
-            List<HashMap<String, Integer>> secondMonthHolidays = sortedHolidaysPerQuarter.get(i).get(1);
-            List<HashMap<String, Integer>> thirdMonthHolidays = sortedHolidaysPerQuarter.get(i).get(2);
+        for (var sortedHolidaysPerMonth: sortedHolidaysPerQuarter) {
+            var firstMonthHolidays = sortedHolidaysPerMonth.getFirst();
+            var secondMonthHolidays = sortedHolidaysPerMonth.get(1);
+            var thirdMonthHolidays = sortedHolidaysPerMonth.get(2);
             
             List<HashMap<Integer, List<HashMap<String, Integer>>>> tempBestQuarterlyHolidays = new ArrayList<>();
-            HashMap<String, Integer> startPoint = maximumStartingHolidayPerQuarter.get(i);
-            
-            int relocationCount = 0;
-            
-            if (firstMonthHolidays.getFirst().equals(startPoint)) {
-                List<String> possibleLocations = possibleLocations(
-                        startPoint.keySet().iterator().next()
-                );
-                possibleLocations.addFirst(startPoint.keySet().iterator().next());
-                int locationChecks = possibleLocations.size();
-                int j = 0;
-                while (locationChecks > 0) {
-                    String tempKey = secondMonthHolidays.get(j).keySet().iterator().next();
-                    Integer tempValue = secondMonthHolidays.get(j).values().iterator().next();
-                    
-                    if (possibleLocations.contains(tempKey)) {
-                        if (!tempKey.equals(startPoint.keySet().iterator().next())) relocationCount++;
+            for (var startPoint: firstMonthHolidays) {
+                for (var midPoint: secondMonthHolidays) {
+                    for (var endPoint: thirdMonthHolidays) {
+                        String startPointKey = startPoint.keySet().iterator().next();
+                        String midPointKey = midPoint.keySet().iterator().next();
+                        String endPointKey = endPoint.keySet().iterator().next();
                         
-                        List<String> possibleLocations1 = possibleLocations(tempKey);
-                        possibleLocations1.addFirst(tempKey);
+                        int relocationCount = 0;
                         
-                        int locationChecks1 = possibleLocations1.size();
-                        int k = 0;
-                        while (locationChecks1 > 0) {
-                            String tempKey1 = thirdMonthHolidays.get(k).keySet().iterator().next();
-                            Integer tempValue1 = thirdMonthHolidays.get(k).values().iterator().next();
-                            
-                            if (possibleLocations1.contains(tempKey1)) {
-                                if (!tempKey1.equals(tempKey)) relocationCount++;
-                                
-                                tempBestQuarterlyHolidays.add(new HashMap<>(Map.of(relocationCount, new ArrayList<>(
-                                        List.of(
-                                                startPoint,
-                                                new HashMap<>(Map.of(tempKey, tempValue)),
-                                                new HashMap<>(Map.of(tempKey1, tempValue1))
-                                        )
-                                ))));
-                                
-                                if (!tempKey1.equals(tempKey)) relocationCount--;
-                                locationChecks1--;
-                            }
-                            
-                            k++;
+                        List<HashMap<String, Integer>> tempMonthHolidays = new ArrayList<>();
+                        tempMonthHolidays.add(startPoint);
+                        
+                        var possibleMidPointLocations = possibleLocations(startPointKey);
+                        possibleMidPointLocations.addFirst(startPointKey);
+                        
+                        if (possibleMidPointLocations.contains(midPointKey)) {
+                            if (!midPointKey.equals(startPointKey)) relocationCount++;
+                            tempMonthHolidays.add(midPoint);
                         }
                         
-                        if (!tempKey.equals(startPoint.keySet().iterator().next())) relocationCount--;
-                        locationChecks--;
+                        possibleMidPointLocations.clear();
+                        
+                        var possibleEndPointLocations = possibleLocations(midPointKey);
+                        possibleEndPointLocations.addFirst(midPointKey);
+                        
+                        if (possibleEndPointLocations.contains(endPointKey)) {
+                            if (!endPointKey.equals(midPointKey)) relocationCount++;
+                            tempMonthHolidays.add(endPoint);
+                        }
+                        
+                        possibleEndPointLocations.clear();
+                        
+                        if (tempMonthHolidays.size() == 3) {
+                            tempBestQuarterlyHolidays.add(new HashMap<>(Map.of(
+                                    relocationCount,
+                                    tempMonthHolidays
+                            )));
+                        }
                     }
-                    
-                    j++;
                 }
-                
             }
             
             result.add(tempBestQuarterlyHolidays);
-            i++;
         }
         
         return result;
@@ -311,55 +270,6 @@ public class BestHolidayPlan {
     
     private static List<String> possibleLocations(String key) {
         return new ArrayList<>(locations.get(key));
-    }
-    
-    private static List<HashMap<String, Integer>> maximumStartingHolidayPerQuarter(
-            List<List<List<HashMap<String, Integer>>>> sortedHolidaysPerQuarter
-    ) {
-        List<HashMap<String, Integer>> result = new ArrayList<>();
-        
-        result.add(
-                new HashMap<>(
-                        Map.of(
-                                sortedHolidaysPerQuarter.getFirst().getFirst().getFirst()
-                                        .keySet().iterator().next(),
-                                sortedHolidaysPerQuarter.getFirst().getFirst().getFirst()
-                                        .values().iterator().next()
-                        )
-                )
-        );
-        result.add(
-                new HashMap<>(
-                        Map.of(
-                                sortedHolidaysPerQuarter.get(1).getFirst().getFirst()
-                                        .keySet().iterator().next(),
-                                sortedHolidaysPerQuarter.get(1).getFirst().getFirst()
-                                        .values().iterator().next()
-                        )
-                )
-        );
-        result.add(
-                new HashMap<>(
-                        Map.of(
-                                sortedHolidaysPerQuarter.get(2).getFirst().getFirst()
-                                        .keySet().iterator().next(),
-                                sortedHolidaysPerQuarter.get(2).getFirst().getFirst()
-                                        .values().iterator().next()
-                        )
-                )
-        );
-        result.add(
-                new HashMap<>(
-                        Map.of(
-                                sortedHolidaysPerQuarter.get(3).getFirst().getFirst()
-                                        .keySet().iterator().next(),
-                                sortedHolidaysPerQuarter.get(3).getFirst().getFirst()
-                                        .values().iterator().next()
-                        )
-                )
-        );
-        
-        return result;
     }
     
     private static List<List<List<HashMap<String, Integer>>>> sortedHolidaysPerQuarter(
@@ -376,14 +286,13 @@ public class BestHolidayPlan {
         );
         
         return holidaysPerQuarter;
-        
     }
     
     private static List<List<List<HashMap<String, Integer>>>> holidaysPerQuarter() {
         
         List<List<List<HashMap<String, Integer>>>> result = new ArrayList<>();
         
-        List<List<HashMap<String, Integer>>> holidaysPerMonth = getLists();
+        var holidaysPerMonth = getLists();
         
         List<List<HashMap<String, Integer>>> firstQuarterHolidays = new ArrayList<>();
         List<List<HashMap<String, Integer>>> secondQuarterHolidays = new ArrayList<>();
@@ -397,20 +306,14 @@ public class BestHolidayPlan {
                 );
                 
                 holidaysPerMonth.get(i).add(tempHashMap);
-                
             }
         }
         
         for (int i=0; i<holidaysPerMonth.size(); i++) {
-            if (i<3) {
-                firstQuarterHolidays.add(holidaysPerMonth.get(i));
-            } else if (i<6) {
-                secondQuarterHolidays.add(holidaysPerMonth.get(i));
-            } else if (i<9) {
-                thirdQuarterHolidays.add(holidaysPerMonth.get(i));
-            } else if (i<12) {
-                fourthQuarterHolidays.add(holidaysPerMonth.get(i));
-            }
+            if (i<3) firstQuarterHolidays.add(holidaysPerMonth.get(i));
+            else if (i<6) secondQuarterHolidays.add(holidaysPerMonth.get(i));
+            else if (i<9) thirdQuarterHolidays.add(holidaysPerMonth.get(i));
+            else if (i<12) fourthQuarterHolidays.add(holidaysPerMonth.get(i));
         }
         
         result.add(firstQuarterHolidays);
@@ -419,11 +322,9 @@ public class BestHolidayPlan {
         result.add(fourthQuarterHolidays);
         
         return result;
-        
     }
     
     private static List<List<HashMap<String, Integer>>> getLists() {
-        
         return new ArrayList<>(
                 List.of(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
                         new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
@@ -447,4 +348,5 @@ public class BestHolidayPlan {
         System.out.println();
         System.out.println("Total Holidays Enjoyed: " + totalHolidaysEnjoyed);
     }
+    
 }
